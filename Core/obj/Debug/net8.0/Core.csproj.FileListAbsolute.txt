@@ -1,0 +1,12 @@
+/Users/hasanhammoudah/skinet-2/Core/obj/Debug/net8.0/Core.GeneratedMSBuildEditorConfig.editorconfig
+/Users/hasanhammoudah/skinet-2/Core/obj/Debug/net8.0/Core.AssemblyInfoInputs.cache
+/Users/hasanhammoudah/skinet-2/Core/obj/Debug/net8.0/Core.AssemblyInfo.cs
+/Users/hasanhammoudah/skinet-2/Core/obj/Debug/net8.0/Core.csproj.CoreCompileInputs.cache
+/Users/hasanhammoudah/skinet-2/Core/obj/Debug/net8.0/Core.sourcelink.json
+/Users/hasanhammoudah/skinet-2/Core/obj/Debug/net8.0/Core.dll
+/Users/hasanhammoudah/skinet-2/Core/obj/Debug/net8.0/refint/Core.dll
+/Users/hasanhammoudah/skinet-2/Core/obj/Debug/net8.0/Core.pdb
+/Users/hasanhammoudah/skinet-2/Core/bin/Debug/net8.0/Core.deps.json
+/Users/hasanhammoudah/skinet-2/Core/bin/Debug/net8.0/Core.dll
+/Users/hasanhammoudah/skinet-2/Core/bin/Debug/net8.0/Core.pdb
+/Users/hasanhammoudah/skinet-2/Core/obj/Debug/net8.0/ref/Core.dll
