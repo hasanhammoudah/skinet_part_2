@@ -5,18 +5,35 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-
 builder.Services.AddControllers();
+
+// Configure database context
 builder.Services.AddDbContext<StoreContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-builder.Services.AddScoped<IProductRepository,ProductRepository>();
-builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
+
+// Register repositories
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("https://localhost:4200") // Add your Angular app URL
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
+// Apply CORS policy
+app.UseCors("AllowAngular");
+
+// Map controllers
 app.MapControllers();
 
 try
@@ -27,11 +44,12 @@ try
     await context.Database.MigrateAsync();
     await StoreContextSeed.SeedAsync(context);
 
+    Console.WriteLine("Database migration and seeding completed successfully.");
 }
 catch (Exception ex)
 {
-    Console.WriteLine(ex);
-    
+    Console.WriteLine($"An error occurred during migration or seeding: {ex.Message}");
+    Console.WriteLine(ex.StackTrace);
     throw;
 }
 
