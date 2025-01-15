@@ -1,3 +1,4 @@
+using API.Middelware;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<StoreContext>(opt =>
 // Register repositories
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddCors();
 
 // Configure CORS
 builder.Services.AddCors(options =>
@@ -32,9 +34,11 @@ var app = builder.Build();
 
 // Apply CORS policy
 app.UseCors("AllowAngular");
-
+app.UseMiddleware<ExceptionMiddleware>();
 // Map controllers
 app.MapControllers();
+app.UseCors(x=>x.AllowAnyHeader().AllowAnyMethod().
+WithOrigins("http://localhost:4200","https://localhost:4200"));
 
 try
 {
