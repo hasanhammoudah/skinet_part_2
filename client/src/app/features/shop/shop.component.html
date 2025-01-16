@@ -1,10 +1,12 @@
 <div class="flex flex-col gap-3">
     <div class="flex justify-between">
-        <mat-paginator (page)="handlePageEvent($event)" [length]="products?.count" [pageSize]="shopParams.pageSize" [showFirstLastButtons]="true" [pageSizeOptions]="pageSizeOptions" [pageIndex]="shopParams.pageNumber -1" class="bg-black" aria-label="Select page">
+        <mat-paginator (page)="handlePageEvent($event)" [length]="products?.count" [pageSize]="shopParams.pageSize" [showFirstLastButtons]="true" 
+        [pageSizeOptions]="pageSizeOptions" [pageIndex]="shopParams.pageNumber -1" class="bg-black" aria-label="Select page">
 
         </mat-paginator>
         <form #searchForm="ngForm" (ngSubmit)="onSearchChange()" class="relative flex items-center w-full max-w-md mx-4">
-        <input type="search" class="bloc w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg" placeholder="Search" name="search" [(ngModel)]="shopParams.search"/>
+        <input type="search" class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg" placeholder="Search" name="search" 
+        [(ngModel)]="shopParams.search"/>
         <button mat-icon-button type="submit" class="absolute inset-y-0 right-8 top-2 flex items-center pl-3">
             <mat-icon>search</mat-icon>
         </button>
