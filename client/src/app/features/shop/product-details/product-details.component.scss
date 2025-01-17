@@ -1,0 +1,12 @@
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    border-color: #4CAF50 !important; /* تغيير لون الحدود */
+  }
+  
+  ::ng-deep .mat-form-field .mat-input-element {
+    color: #000000 !important; /* تغيير لون النص داخل الحقل */
+  }
+  
+  ::ng-deep .mat-form-field .mat-label {
+    color: #4CAF50 !important; /* تغيير لون النص داخل الوسم */
+  }
+  

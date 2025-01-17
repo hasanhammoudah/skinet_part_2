@@ -1,15 +1,29 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 .container{
-    @apply mx-auto max-w-screen-2xl
+    @apply mx-auto max-w-screen-2xl;
 }
+
 .text-primary{
     color: #7d00fa;
 }
+
 button.match-input-height{
     height: var(--mat-form-field-container-height) !important;
     color: #7d00fa;
+}
+
+.mdc-notched-outline__notch{
+    border-right-style: none !important;
+}
+
+.mat-form-field input {
+    color: black !important;
+    border: 2px solid black !important; /* Ensure the border color is black */
+}
+
+.mat-form-field.focus-within {
+    border-color: blue !important; /* Optional: change border color on focus */
 }
