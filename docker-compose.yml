@@ -1,8 +1,21 @@
 services:
   sql:
-    image: mcr.microsoft.com/azure-sql-edge
+    image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
-      ACCEPT_EULA: "1"
+      ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "Password@1"
     ports:
       - "1433:1433"
+    volumes:
+      - ~/Desktop/sql-data:/var/opt/mssql
+    platform: "linux/amd64"
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+  sql-data:

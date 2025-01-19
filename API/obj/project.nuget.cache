@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "D2GQLn34QkU=",
+  "dgSpecHash": "8nDKZKAAW+0=",
   "success": true,
   "projectFilePath": "/Users/hasanhammoudah/skinet-2/API/API.csproj",
   "expectedPackageFiles": [
@@ -48,6 +48,8 @@
     "/Users/hasanhammoudah/.nuget/packages/microsoft.sqlserver.server/1.0.0/microsoft.sqlserver.server.1.0.0.nupkg.sha512",
     "/Users/hasanhammoudah/.nuget/packages/microsoft.win32.systemevents/6.0.0/microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "/Users/hasanhammoudah/.nuget/packages/mono.texttemplating/3.0.0/mono.texttemplating.3.0.0.nupkg.sha512",
+    "/Users/hasanhammoudah/.nuget/packages/pipelines.sockets.unofficial/2.2.8/pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+    "/Users/hasanhammoudah/.nuget/packages/stackexchange.redis/2.8.24/stackexchange.redis.2.8.24.nupkg.sha512",
     "/Users/hasanhammoudah/.nuget/packages/system.clientmodel/1.0.0/system.clientmodel.1.0.0.nupkg.sha512",
     "/Users/hasanhammoudah/.nuget/packages/system.codedom/6.0.0/system.codedom.6.0.0.nupkg.sha512",
     "/Users/hasanhammoudah/.nuget/packages/system.collections.immutable/7.0.0/system.collections.immutable.7.0.0.nupkg.sha512",

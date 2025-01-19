@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "xeeG+HiTNKM=",
+  "dgSpecHash": "2D1xNpM0v0o=",
   "success": true,
   "projectFilePath": "/Users/hasanhammoudah/skinet-2/Infrastructure/Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -36,6 +36,8 @@
     "/Users/hasanhammoudah/.nuget/packages/microsoft.netcore.targets/1.1.0/microsoft.netcore.targets.1.1.0.nupkg.sha512",
     "/Users/hasanhammoudah/.nuget/packages/microsoft.sqlserver.server/1.0.0/microsoft.sqlserver.server.1.0.0.nupkg.sha512",
     "/Users/hasanhammoudah/.nuget/packages/microsoft.win32.systemevents/6.0.0/microsoft.win32.systemevents.6.0.0.nupkg.sha512",
+    "/Users/hasanhammoudah/.nuget/packages/pipelines.sockets.unofficial/2.2.8/pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+    "/Users/hasanhammoudah/.nuget/packages/stackexchange.redis/2.8.24/stackexchange.redis.2.8.24.nupkg.sha512",
     "/Users/hasanhammoudah/.nuget/packages/system.clientmodel/1.0.0/system.clientmodel.1.0.0.nupkg.sha512",
     "/Users/hasanhammoudah/.nuget/packages/system.configuration.configurationmanager/6.0.1/system.configuration.configurationmanager.6.0.1.nupkg.sha512",
     "/Users/hasanhammoudah/.nuget/packages/system.diagnostics.diagnosticsource/9.0.0/system.diagnostics.diagnosticsource.9.0.0.nupkg.sha512",
