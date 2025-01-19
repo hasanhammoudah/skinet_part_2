@@ -14,3 +14,7 @@ a{
         color: #7d00fa;
     }
 }
+.custom-blue-bar .mat-progress-bar-fill::after {
+    background-color: blue; /* يمكنك تحديد اللون كاسم أو كقيمة RGB أو HEX */
+  }
+  
