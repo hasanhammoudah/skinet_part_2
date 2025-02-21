@@ -46,10 +46,10 @@ builder.Services.AddIdentityApiEndpoints<AppUser>().AddEntityFrameworkStores<Sto
 var app = builder.Build();
 
 // Apply CORS policy
-app.UseCors("AllowAngular");
-app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
+    .WithOrigins("http://localhost:4200","https://localhost:4200"));app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
-app.MapIdentityApi<AppUser>();
+app.MapGroup("api").MapIdentityApi<AppUser>(); // api/login
 
 // تنفيذ المهاجرات قبل تشغيل التطبيق
 using (var scope = app.Services.CreateScope())
