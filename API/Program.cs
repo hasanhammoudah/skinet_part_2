@@ -1,4 +1,5 @@
 using API.Middelware;
+using Core.Entities;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Services;
@@ -24,47 +25,49 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
 {
     var connString = builder.Configuration.GetConnectionString("Redis")
     ?? throw new Exception("Cannot get redis connection string");
-    var configuration=ConfigurationOptions.Parse(connString,true);
+    var configuration = ConfigurationOptions.Parse(connString, true);
     return ConnectionMultiplexer.Connect(configuration);
 });
-builder.Services.AddSingleton<ICartService,CartService>();
+builder.Services.AddSingleton<ICartService, CartService>();
 
 // Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("https://localhost:4200") // Add your Angular app URL
+        policy.WithOrigins("https://localhost:4200")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<AppUser>().AddEntityFrameworkStores<StoreContext>();
 
 var app = builder.Build();
 
 // Apply CORS policy
 app.UseCors("AllowAngular");
 app.UseMiddleware<ExceptionMiddleware>();
-// Map controllers
 app.MapControllers();
-app.UseCors(x=>x.AllowAnyHeader().AllowAnyMethod().
-WithOrigins("http://localhost:4200","https://localhost:4200"));
+app.MapIdentityApi<AppUser>();
 
-try
+// تنفيذ المهاجرات قبل تشغيل التطبيق
+using (var scope = app.Services.CreateScope())
 {
-    using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<StoreContext>();
-    await context.Database.MigrateAsync();
-    await StoreContextSeed.SeedAsync(context);
-
-    Console.WriteLine("Database migration and seeding completed successfully.");
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"An error occurred during migration or seeding: {ex.Message}");
-    Console.WriteLine(ex.StackTrace);
-    throw;
+    try
+    {
+        var context = services.GetRequiredService<StoreContext>();
+        context.Database.Migrate(); // استخدم .Migrate() بدلاً من await context.Database.MigrateAsync()
+        StoreContextSeed.SeedAsync(context).Wait(); // استخدام .Wait() لمزامنة المهمة
+        Console.WriteLine("Database migration and seeding completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred during migration or seeding: {ex.Message}");
+        Console.WriteLine(ex.StackTrace);
+        throw;
+    }
 }
 
 app.Run();
