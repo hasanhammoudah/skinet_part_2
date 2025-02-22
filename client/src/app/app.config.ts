@@ -8,6 +8,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { lastValueFrom } from 'rxjs';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 
 function initalizeApp(initService: InitService){
@@ -22,7 +23,7 @@ export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }),
      provideRouter(routes),
      provideAnimationsAsync(),
-     provideHttpClient(withInterceptors([errorInterceptor,loadingInterceptor])),
+     provideHttpClient(withInterceptors([errorInterceptor,loadingInterceptor,authInterceptor])),
      {
       provide:APP_INITIALIZER,
       useFactory:initalizeApp,
