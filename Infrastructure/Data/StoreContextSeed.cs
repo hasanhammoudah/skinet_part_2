@@ -18,6 +18,19 @@ namespace Infrastructure.Data
 
                 await context.SaveChangesAsync();
             }
+
+             if(!context.DeliveryMethods.Any()){
+                var deliveryMethodData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/delivery.json");
+
+                var methods = JsonSerializer.Deserialize<List<DeliveryMethod>>(deliveryMethodData);
+
+                if(methods == null) return;
+                
+                  // إضافة البيانات إلى DbSet
+                await context.DeliveryMethods.AddRangeAsync(methods);
+
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

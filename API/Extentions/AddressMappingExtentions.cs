@@ -15,7 +15,7 @@ namespace API.Extentions
                 Line2 = address.Line2,
                 City = address.City,
                 State = address.State,
-                PostalCode = address.PostalCode,
+                Postal_code = address.Postal_code,
                 Country = address.Country
             };
         }
@@ -30,7 +30,7 @@ namespace API.Extentions
                 Line2 = addressDto.Line2,
                 City = addressDto.City,
                 State = addressDto.State,
-                PostalCode = addressDto.PostalCode,
+                Postal_code = addressDto.Postal_code,
                 Country = addressDto.Country
             };
         }
@@ -43,7 +43,7 @@ namespace API.Extentions
                 address.Line2 = addressDto.Line2;
                 address.City = addressDto.City;
                 address.State = addressDto.State;
-                address.PostalCode = addressDto.PostalCode;
+                address.Postal_code = addressDto.Postal_code;
                 address.Country = addressDto.Country;
 
 

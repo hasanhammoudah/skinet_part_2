@@ -13,7 +13,7 @@ namespace API.DTOs
          [Required]
         public  string State { get; set; }= string.Empty;
          [Required]
-        public  string PostalCode { get; set; }= string.Empty;
+        public  string Postal_code { get; set; }= string.Empty;
          [Required]
         public  string Country { get; set; }= string.Empty;
     }

@@ -9,6 +9,7 @@ import { CartComponent } from './features/cart/cart.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { LoginComponent } from './features/account/login/login.component';
 import { RegisterComponent } from './features/account/register/register.component';
+import { CheckoutSuccessComponent } from './features/checkout/checkout-success/checkout-success.component';
 
 export const routes: Routes = [
     {path:'',component:HomeComponent},
@@ -16,6 +17,7 @@ export const routes: Routes = [
     {path:'shop/:id',component:ProductDetailsComponent},
     {path:'cart',component:CartComponent},
     {path:'checkout',component:CheckoutComponent},
+    {path:'checkout/success',component:CheckoutSuccessComponent},
     {path:'account/login',component:LoginComponent},
     {path:'account/register',component:RegisterComponent},
     {path:'test-error',component:TestErrorComponent},
