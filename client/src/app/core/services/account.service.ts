@@ -50,4 +50,8 @@ updateAddress(address:Address){
   );
 }
 
+getAuthState(){
+  return this.http.get<{isAuthenticated:boolean}>(this.baseUrl + 'account/auth-status');
+}
+
 }

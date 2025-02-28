@@ -57,7 +57,7 @@ async ngOnInit() {
   try {
     this.addressElement = await this.stripeService.createAddressElement();
     this.addressElement.mount('#address-element');
-     this.addressElement.on('change',this.handleAddressChange)
+    this.addressElement.on('change',this.handleAddressChange)
     this.paymentElement = await this.stripeService.createPaymentElement();
     this.paymentElement?.mount('#payment-element');
     this.paymentElement.on('change',this.handlePaymentChange)
@@ -65,7 +65,7 @@ async ngOnInit() {
     this.snackbarService.error(error.message);
   }
 }
-handleAddressChange = (event:StripeAddressElementChangeEvent) =>{ 
+handleAddressChange = (event:StripeAddressElementChangeEvent) => { 
   this.completionStatus.update(state => {
     state.address = event.complete;
     return state;
@@ -126,7 +126,11 @@ async onStepChange(event:StepperSelectionEvent){
   if(event.selectedIndex === 1){
     if(this.saveAddress){
       const address = await this.getAddressFromStripeAddress();
-      address && firstValueFrom(this.accountService.updateAddress(address));
+      //address && firstValueFrom(this.accountService.updateAddress(address));
+      if (address) {
+        firstValueFrom(this.accountService.updateAddress(address));
+      }
+      
      
     }
   }
@@ -155,7 +159,7 @@ private async getAddressFromStripeAddress(): Promise<Address | null>{
 }
 
 onSaveAddressCheckboxChange(event:MatCheckboxChange){
- this.saveAddress=event.checked;
+ this.saveAddress= event.checked;
 }
 ngOnDestroy(): void {
   this.stripeService.disposeElements();
