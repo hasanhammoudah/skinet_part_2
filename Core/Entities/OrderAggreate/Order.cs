@@ -20,5 +20,10 @@ namespace Core.Entities.OrderAggreate
 
         public required string PaymentIntentId { get; set; }
 
+          public decimal GetTotal()
+    {
+        return Subtotal + DeliveryMethod.Price;
+    }
+
     }
 }

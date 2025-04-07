@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using API.Middelware;
 using Core.Entities;
 using Core.Interfaces;
@@ -9,8 +10,11 @@ using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 // Configure database context
 builder.Services.AddDbContext<StoreContext>(opt =>
 {
@@ -30,6 +34,7 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
     return ConnectionMultiplexer.Connect(configuration);
 });
 builder.Services.AddSingleton<ICartService, CartService>();
+builder.Services.AddScoped<IResponseCacheService, ResponseCacheService>();
 
 // Configure CORS
 builder.Services.AddCors(options =>

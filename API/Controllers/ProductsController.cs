@@ -6,18 +6,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    
+
     public class ProductsController(IUnitOfWork unit) : BaseApiController
     {
 
-
+        [Cache(600)]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts([FromQuery]ProductSpecParams specParams)
+        public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts([FromQuery] ProductSpecParams specParams)
         {
             var spec = new ProductSpecification(specParams);
-           
-            return await CreatePagedResult(unit.Repository<Product>(),spec,specParams.PageIndex,specParams.PageSize);
+
+            return await CreatePagedResult(unit.Repository<Product>(), spec, specParams.PageIndex, specParams.PageSize);
         }
+        [Cache(600)]
+
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
@@ -25,6 +27,7 @@ namespace API.Controllers
             if (product == null) return NotFound();
             return product;
         }
+        [InvalidateCache("api/Products|")]
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct(Product product)
         {
@@ -36,7 +39,7 @@ namespace API.Controllers
             return BadRequest("Problem creating product");
 
         }
-
+        [InvalidateCache("api/Products|")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> UpdateProduct(int id, Product product)
         {
@@ -49,7 +52,7 @@ namespace API.Controllers
             return BadRequest("Problem updating the product");
 
         }
-
+        [InvalidateCache("api/Products|")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
@@ -63,6 +66,7 @@ namespace API.Controllers
             return BadRequest("Problem deleting the product");
 
         }
+        [Cache(10000)]
 
         [HttpGet("brands")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
@@ -70,12 +74,13 @@ namespace API.Controllers
             var spec = new BrandListSpecification();
             return Ok(await unit.Repository<Product>().ListAsync(spec));
         }
+        [Cache(10000)]
 
-          [HttpGet("types")]
+        [HttpGet("types")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetTypes()
         {
-          var spec = new TypeListSpecification();
-          return Ok(await unit.Repository<Product>().ListAsync(spec));
+            var spec = new TypeListSpecification();
+            return Ok(await unit.Repository<Product>().ListAsync(spec));
         }
 
         private bool ProductExists(int id)

@@ -17,7 +17,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/client",
+            "outputPath": {
+              "base": "../API/wwwroot",
+              "browser": ""
+            },
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -32,8 +35,8 @@
               }
             ],
             "styles": [
-               "@angular/material/prebuilt-themes/pink-bluegrey.css",
-                "src/styles.scss"
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -42,8 +45,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1MB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -103,8 +106,7 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/pink-bluegrey.css",
-               "src/styles.scss"
+              "src/styles.scss"
             ],
             "scripts": []
           }
