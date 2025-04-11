@@ -53,33 +53,44 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
   private router = inject(Router);
   private orderService = inject(OrderService);
+
   addressElement?: StripeAddressElement;
   paymentElement?: StripePaymentElement;
-  saveAddress = false;
-  completionStatus = signal<{
-    address: boolean;
-    card: boolean;
-    delivery: boolean;
-  }>({ address: false, card: false, delivery: false });
   confirmationToken?: ConfirmationToken;
+  saveAddress = false;
   loading = false;
 
-  // constructor() {
-  //   this.handleAddressChange = this.handleAddressChange.bind(this);
-  //  }
+  completionStatus = signal({
+    address: false,
+    card: false,
+    delivery: false,
+  });
 
   async ngOnInit() {
     try {
+      // 🧠 استرجع بيانات السلة وتأكد من clientSecret
+      const cart = await firstValueFrom(this.stripeService.createOrUpdatePaymentIntent());
+  
+      if (!cart?.clientSecret) {
+        throw new Error('Missing client secret from cart');
+      }
+  
+      // ✅ بعد ما يصلك clientSecret، اعمل mount للـ Stripe Elements
       this.addressElement = await this.stripeService.createAddressElement();
       this.addressElement.mount('#address-element');
       this.addressElement.on('change', this.handleAddressChange);
+  
       this.paymentElement = await this.stripeService.createPaymentElement();
-      this.paymentElement?.mount('#payment-element');
+      this.paymentElement.mount('#payment-element');
       this.paymentElement.on('change', this.handlePaymentChange);
+      
     } catch (error: any) {
-      this.snackbarService.error(error.message);
+      this.snackbarService.error(error.message || 'Something went wrong');
     }
   }
+  
+  
+
   handleAddressChange = (event: StripeAddressElementChangeEvent) => {
     this.completionStatus.update((state) => {
       state.address = event.complete;
@@ -104,25 +115,23 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   async confirmPayment(stepper: MatStepper) {
     this.loading = true;
     try {
-      if (this.confirmationToken) {
-        const result = await this.stripeService.confirmPayment(this.confirmationToken);
+      if (!this.confirmationToken) throw new Error('Missing confirmation token');
 
-        if (result.paymentIntent?.status === 'succeeded') {
-          const order = await this.createOrderModel();
-          const orderResult = await firstValueFrom(this.orderService.createOrder(order));
-          if (orderResult) {
-            // this.orderService.order = true;
-            this.cardService.deleteCart();
-            this.cardService.selectedDelivery.set(null);
-            this.router.navigateByUrl('/checkout/success');
-          } else {
-            throw new Error('Order creation failed');
-          } 
-        } else if (result.error) {
-          throw new Error(result.error.message);
+      const result = await this.stripeService.confirmPayment(this.confirmationToken);
+
+      if (result.paymentIntent?.status === 'succeeded') {
+        const order = await this.createOrderModel();
+        const orderResult = await firstValueFrom(this.orderService.createOrder(order));
+        if (orderResult) {
+          this.orderService.orderComplete = true;
+          this.cardService.deleteCart();
+          this.cardService.selectedDelivery.set(null);
+          this.router.navigateByUrl('/checkout/success');
         } else {
-          throw new Error('Something went wrong');
+          throw new Error('Order creation failed');
         }
+      } else {
+        throw new Error(result.error?.message || 'Payment failed');
       }
     } catch (error: any) {
       this.snackbarService.error(error.message || 'Something went wrong');
@@ -147,22 +156,16 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         last4: +card.last4,
         brand: card.brand,
         expMonth: card.exp_month,
-        expYear: card.exp_year
+        expYear: card.exp_year,
       },
       deliveryMethodId: cart.deliveryMethodId,
       shippingAddress,
-      
-    }
+    };
   }
-
 
   async getConfirmationToken() {
     try {
-      if (
-        Object.values(this.completionStatus()).every(
-          (status) => status === true
-        )
-      ) {
+      if (Object.values(this.completionStatus()).every((s) => s === true)) {
         const result = await this.stripeService.createConfirmationToken();
         if (result.error) throw new Error(result.error.message);
         this.confirmationToken = result.confirmationToken;
@@ -174,25 +177,19 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   async onStepChange(event: StepperSelectionEvent) {
-    if (event.selectedIndex === 1) {
-      if (this.saveAddress) {
-        const address = (await this.getAddressFromStripeAddress()) as Address;
-        //address && firstValueFrom(this.accountService.updateAddress(address));
-        if (address) {
-          firstValueFrom(this.accountService.updateAddress(address));
-        }
+    if (event.selectedIndex === 1 && this.saveAddress) {
+      const address = await this.getAddressFromStripeAddress() as Address;
+      if (address) {
+        firstValueFrom(this.accountService.updateAddress(address));
       }
     }
-    if (event.selectedIndex === 2) {
-      await firstValueFrom(this.stripeService.createOrUpdatePaymentIntent());
-    }
+
     if (event.selectedIndex === 3) {
       await this.getConfirmationToken();
     }
   }
-  private async getAddressFromStripeAddress(): Promise<
-    Address | ShippingAddress | null
-  > {
+
+  private async getAddressFromStripeAddress(): Promise<Address | ShippingAddress | null> {
     const result = await this.addressElement?.getValue();
     const address = result?.value.address;
     if (address) {
@@ -201,7 +198,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         line1: address.line1,
         line2: address.line2 || undefined,
         city: address.city,
-        state: address.state,
+        state: address.state || '—', // ✅ required fallback
         postal_code: address.postal_code,
         country: address.country,
       };
@@ -213,6 +210,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   onSaveAddressCheckboxChange(event: MatCheckboxChange) {
     this.saveAddress = event.checked;
   }
+
   ngOnDestroy(): void {
     this.stripeService.disposeElements();
   }

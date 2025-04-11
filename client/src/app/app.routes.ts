@@ -14,6 +14,7 @@ export const routes: Routes = [
     {path:'shop/:id',component:ProductDetailsComponent},
     {path:'cart',component:CartComponent},
     {path:'checkout',loadChildren:()=>import('./features/checkout/routes').then(mod=>mod.checkoutRoutes)},
+
     {path:'orders',loadChildren:()=>import('./features/orders/routes').then(mod=>mod.orderRoutes)},
     {path:'account',loadChildren:()=>import('./features/account/routes').then(mod=>mod.accountRoutes)},
     {path:'test-error',component:TestErrorComponent},

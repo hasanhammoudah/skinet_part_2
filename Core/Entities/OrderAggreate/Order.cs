@@ -1,3 +1,5 @@
+using Core.Interfaces;
+
 namespace Core.Entities.OrderAggreate
 {
     public class Order : BaseEntity

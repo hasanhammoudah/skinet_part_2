@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using API.Middelware;
+using API.SignalR;
 using Core.Entities;
 using Core.Interfaces;
 using Infrastructure.Data;
@@ -15,6 +16,11 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+    builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+{
+    options.SerializerOptions.PropertyNameCaseInsensitive = true;
+});
+
 // Configure database context
 builder.Services.AddDbContext<StoreContext>(opt =>
 {
@@ -49,14 +55,22 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>().AddEntityFrameworkStores<StoreContext>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+});
 
 var app = builder.Build();
 
 // Apply CORS policy
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
-    .WithOrigins("http://localhost:4200","https://localhost:4200"));app.UseMiddleware<ExceptionMiddleware>();
+    .WithOrigins("http://localhost:4200","https://localhost:4200"));
+app.UseAuthentication();
+app.UseAuthorization(); 
+app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<AppUser>(); // api/login
+app.MapHub<NotificationHub>("/hub/notifications");
 
 // تنفيذ المهاجرات قبل تشغيل التطبيق
 using (var scope = app.Services.CreateScope())
