@@ -5,7 +5,6 @@ import { Product } from '../../shared/models/product';
 import { ProductItemComponent } from "./product-item/product-item.component";
 import { MatDialog} from '@angular/material/dialog';
 import { FiltersDialogComponent } from './filters-dialog/filters-dialog.component';
-import { MatCard } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import {MatMenuModule, MatMenuTrigger} from '@angular/material/menu';

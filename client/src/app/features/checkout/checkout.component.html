@@ -1,5 +1,5 @@
-<div class="flex mt-32 gap-6">
-    <div class="w-3/4">
+<div class="flex mt-32 gap-6 px-3">
+    <div class="w-3/4 ">
         <mat-stepper 
         (selectionChange)="onStepChange($event)"
         [linear]="true"
@@ -59,7 +59,7 @@
             </div>
         </mat-step>
        </mat-stepper>
-       <pre>{{ completionStatus() | json }}</pre>
+       <!-- <pre>{{ completionStatus() | json }}</pre> -->
     </div>
     <div class="w-1/4">
         <app-order-summary></app-order-summary>

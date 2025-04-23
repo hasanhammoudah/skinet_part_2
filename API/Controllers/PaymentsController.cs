@@ -1,3 +1,4 @@
+using API.Extensions;
 using API.SignalR;
 using Core.Entities;
 using Core.Entities.OrderAggreate;
@@ -101,7 +102,7 @@ namespace API.Controllers
                 return;
             }
 
-            var expectedAmount = (long)order.GetTotal() * 100;
+            var expectedAmount = (long)Math.Round(order.GetTotal() * 100, MidpointRounding.AwayFromZero);
             if (expectedAmount != intent.Amount)
             {
                 order.Status = OrderStatus.PaymentMismatch;
@@ -117,7 +118,7 @@ namespace API.Controllers
             var connectionId = NotificationHub.GetConnectionIdByEmail(order.BuyerEmail);
             if(!string.IsNullOrEmpty(connectionId))
             {
-                await hubContext.Clients.Client(connectionId).SendAsync("OrderCompleteNotification", order);
+                await hubContext.Clients.Client(connectionId).SendAsync("OrderCompleteNotification", order.ToDto());
             }
             else
             {

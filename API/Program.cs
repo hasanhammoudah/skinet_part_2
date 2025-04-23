@@ -16,45 +16,52 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-    builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
 {
     options.SerializerOptions.PropertyNameCaseInsensitive = true;
 });
 
-// Configure database context
+// Database context
 builder.Services.AddDbContext<StoreContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-// Register repositories
+// Repositories
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddCors();
+
+// Redis and services
 builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
 {
     var connString = builder.Configuration.GetConnectionString("Redis")
-    ?? throw new Exception("Cannot get redis connection string");
+        ?? throw new Exception("Cannot get redis connection string");
     var configuration = ConfigurationOptions.Parse(connString, true);
     return ConnectionMultiplexer.Connect(configuration);
 });
+
 builder.Services.AddSingleton<ICartService, CartService>();
 builder.Services.AddScoped<IResponseCacheService, ResponseCacheService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
-// Configure CORS
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("https://localhost:4200")
+        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
+
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>().AddEntityFrameworkStores<StoreContext>();
-builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+// SignalR
 builder.Services.AddSignalR(options =>
 {
     options.EnableDetailedErrors = true;
@@ -62,30 +69,39 @@ builder.Services.AddSignalR(options =>
 
 var app = builder.Build();
 
-// Apply CORS policy
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
-    .WithOrigins("http://localhost:4200","https://localhost:4200"));
-app.UseAuthentication();
-app.UseAuthorization(); 
+// Middleware and static files setup
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseCors("AllowAngular");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// ⬇️ Add these for Angular frontend
+app.UseDefaultFiles();  // serves index.html by default
+app.UseStaticFiles();   // serves static files (js, css, etc.)
+
 app.MapControllers();
-app.MapGroup("api").MapIdentityApi<AppUser>(); // api/login
+app.MapGroup("api").MapIdentityApi<AppUser>();
 app.MapHub<NotificationHub>("/hub/notifications");
 
-// تنفيذ المهاجرات قبل تشغيل التطبيق
+// ⬇️ Angular routing fallback
+app.MapFallbackToFile("index.html");
+
+// DB migration and seeding
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<StoreContext>();
-        context.Database.Migrate(); // استخدم .Migrate() بدلاً من await context.Database.MigrateAsync()
-        StoreContextSeed.SeedAsync(context).Wait(); // استخدام .Wait() لمزامنة المهمة
-        Console.WriteLine("Database migration and seeding completed successfully.");
+        context.Database.Migrate();
+        StoreContextSeed.SeedAsync(context).Wait();
+        Console.WriteLine("✅ Database migration and seeding completed.");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"An error occurred during migration or seeding: {ex.Message}");
+        Console.WriteLine($"❌ Error during migration or seeding: {ex.Message}");
         Console.WriteLine(ex.StackTrace);
         throw;
     }
