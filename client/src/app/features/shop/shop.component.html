@@ -40,6 +40,13 @@
                 }
             </mat-selection-list>
         </mat-menu>
+    }@else{
+    <app-empty-state
+    message="No products match this filter"
+    icon="filter_alt_off"
+    actionText="Reset filter",
+    (action)="resetFilters()"
+    />
     }
     
 </div>
