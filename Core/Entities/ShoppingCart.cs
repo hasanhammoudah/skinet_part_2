@@ -10,5 +10,7 @@ namespace Core.Entities
         public string? ClientSecret { get; set; }
 
         public string? PaymentIntentId { get; set; }
+        public AppCoupon? Coupon { get; set; }
+
     }
 }

@@ -8,66 +8,96 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class OrdersController(ICartService cartService,IUnitOfWork unit) : BaseApiController
+    public class OrdersController(ICartService cartService, IUnitOfWork unit) : BaseApiController
     {
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
         {
             var email = User.GetEmail();
             var cart = await cartService.GetCartAsync(orderDto.CartId);
-            if(cart == null) return BadRequest("Cart not found");
-            if(cart.PaymentIntentId == null) return BadRequest("Payment intent for this order");
+            if (cart == null) return BadRequest("Cart not found");
+            if (cart.PaymentIntentId == null) return BadRequest("Missing payment intent for this order");
 
             var items = new List<OrderItem>();
-            foreach(var item in cart.Items){
+            foreach (var item in cart.Items)
+            {
                 var productItem = await unit.Repository<Product>().GetByIdAsync(item.ProductId);
-                if(productItem == null) return BadRequest("Problem with the order");
-                var itemOrdered = new ProductItemOrdered{
+                if (productItem == null) return BadRequest("Problem with the order");
+
+                var itemOrdered = new ProductItemOrdered
+                {
                     ProductId = item.ProductId,
                     ProductName = item.ProductName,
                     PictureUrl = item.PictureUrl
                 };
-                var orderItem = new OrderItem{
+
+                var orderItem = new OrderItem
+                {
                     ItemOrdered = itemOrdered,
                     Price = productItem.Price,
                     Quantity = item.Quantity
                 };
+
                 items.Add(orderItem);
             }
+
             var deliveryMethod = await unit.Repository<DeliveryMethod>().GetByIdAsync(orderDto.DeliveryMethodId);
-            if(deliveryMethod == null) return BadRequest("No delivery method selected");
-            var order = new Order{
+            if (deliveryMethod == null) return BadRequest("No delivery method selected");
+
+            var subtotal = items.Sum(i => i.Price * i.Quantity);
+            decimal discount = 0;
+
+            if (cart.Coupon != null)
+            {
+                if (cart.Coupon.AmountOff.HasValue)
+                    discount = (decimal)cart.Coupon.AmountOff.Value;
+                else if (cart.Coupon.PercentOff.HasValue)
+                    discount = subtotal * ((decimal)cart.Coupon.PercentOff.Value / 100m);
+            }
+
+            var total = subtotal + deliveryMethod.Price - discount;
+
+            var order = new Order
+            {
                 BuyerEmail = email,
                 ShippingAddress = orderDto.ShippingAddress,
                 DeliveryMethod = deliveryMethod,
                 PaymentSummary = orderDto.PaymentSummary,
                 PaymentIntentId = cart.PaymentIntentId,
                 OrderItems = items,
-                Subtotal = items.Sum(i => i.Price * i.Quantity)
+                Subtotal = subtotal,
+                Total = total,
+                Discount = discount,
+                Coupon = cart.Coupon
             };
-           unit.Repository<Order>().Add(order);
-           if(await unit.Complete()){
-               return Ok(order);
-           }
-           return BadRequest("Problem creating order");
+
+            unit.Repository<Order>().Add(order);
+
+            if (await unit.Complete())
+            {
+                return Ok(order);
+            }
+
+            return BadRequest("Problem creating order");
         }
-    
-    [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<Order>>> GetOrdersForUser()
-    {
-        var email = User.GetEmail();
-        var spec = new OrderSpecification(email);
-        var orders = await unit.Repository<Order>().ListAsync(spec);
-        return Ok(orders);
+
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<Order>>> GetOrdersForUser()
+        {
+            var email = User.GetEmail();
+            var spec = new OrderSpecification(email);
+            var orders = await unit.Repository<Order>().ListAsync(spec);
+            return Ok(orders);
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Order>> GetOrderById(int id)
+        {
+            var email = User.GetEmail();
+            var spec = new OrderSpecification(email, id);
+            var order = await unit.Repository<Order>().GetEntityWithSpec(spec);
+            if (order == null) return NotFound();
+            return order;
+        }
     }
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<Order>> GetOrderById(int id)
-    {
-        var email = User.GetEmail();
-        var spec = new OrderSpecification(email,id);
-        var order = await unit.Repository<Order>().GetEntityWithSpec(spec);
-        if(order == null) return NotFound();
-        return order;
-    }
-}
 }

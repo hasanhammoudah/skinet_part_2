@@ -23,5 +23,5 @@ This repository represents the next iteration of the Skynet project, introducing
 
 
 
-
+innocent-boxer-17313.upstash.io:6379,password=AUOhAAIjcDE4NGJjODEyY2M0MjM0YzI0ODQ2NDI2ZDQ4NjViZjU1OHAxMA,ssl=true,abortConnect=false
 

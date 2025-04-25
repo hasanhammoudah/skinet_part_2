@@ -45,6 +45,8 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
 builder.Services.AddSingleton<ICartService, CartService>();
 builder.Services.AddScoped<IResponseCacheService, ResponseCacheService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<ICouponService, CouponService>();
+
 
 // CORS
 builder.Services.AddCors(options =>
@@ -60,6 +62,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>().AddEntityFrameworkStores<StoreContext>();
+
 
 // SignalR
 builder.Services.AddSignalR(options =>

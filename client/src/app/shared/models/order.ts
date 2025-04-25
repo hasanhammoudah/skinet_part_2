@@ -14,7 +14,17 @@ export interface Order {
   status: string
   total: number
   paymentIntentId: string
+  coupon?: Coupon;// ✅ أضف هذا السطر
+
 }
+
+export interface Coupon {
+  code: string;
+  percentOff?: number;
+  amountOff?: number;
+  expiration?: string;
+}
+
 
 export interface ShippingAddress {
   name: string

@@ -8,7 +8,7 @@ namespace Core.Entities.OrderAggreate
 
         public required string BuyerEmail { get; set; }
 
-        public ShippingAddress ShippingAddress { get; set; } =  null!;
+        public ShippingAddress ShippingAddress { get; set; } = null!;
 
         public DeliveryMethod DeliveryMethod { get; set; } = null!;
 
@@ -22,10 +22,15 @@ namespace Core.Entities.OrderAggreate
 
         public required string PaymentIntentId { get; set; }
 
-          public decimal GetTotal()
-    {
-        return Subtotal + DeliveryMethod.Price;
-    }
+        public AppCoupon? Coupon { get; set; } // الكوبون المستخدم في الطلب (اختياري)
+        public decimal Discount { get; set; } // قيمة الخصم الناتجة عن الكوبون
+        public decimal Total { get; set; } // المبلغ النهائي بعد الخصم والشحن
+
+
+        public decimal GetTotal()
+        {
+         return Subtotal + DeliveryMethod.Price - (Discount > 0 ? Discount : 0);
+        }
 
     }
 }

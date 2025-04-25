@@ -1,3 +1,5 @@
+/Users/hasanhammoudah/skinet-2/Infrastructure/bin/Debug/net8.0/Data/SeedData/delivery.json
+/Users/hasanhammoudah/skinet-2/Infrastructure/bin/Debug/net8.0/Data/SeedData/products.json
 /Users/hasanhammoudah/skinet-2/Infrastructure/bin/Debug/net8.0/Infrastructure.deps.json
 /Users/hasanhammoudah/skinet-2/Infrastructure/bin/Debug/net8.0/Infrastructure.dll
 /Users/hasanhammoudah/skinet-2/Infrastructure/bin/Debug/net8.0/Infrastructure.pdb
@@ -14,5 +16,3 @@
 /Users/hasanhammoudah/skinet-2/Infrastructure/obj/Debug/net8.0/refint/Infrastructure.dll
 /Users/hasanhammoudah/skinet-2/Infrastructure/obj/Debug/net8.0/Infrastructure.pdb
 /Users/hasanhammoudah/skinet-2/Infrastructure/obj/Debug/net8.0/ref/Infrastructure.dll
-/Users/hasanhammoudah/skinet-2/Infrastructure/bin/Debug/net8.0/Data/SeedData/delivery.json
-/Users/hasanhammoudah/skinet-2/Infrastructure/bin/Debug/net8.0/Data/SeedData/products.json

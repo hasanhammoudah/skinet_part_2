@@ -13,6 +13,8 @@ namespace Infrastructure.Data
         public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        // public DbSet<AppCoupon> Coupons { get; set; } // ✅ جدول للكوبونات
+
 
 
 
@@ -23,6 +25,8 @@ namespace Infrastructure.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductConfiguration).Assembly);
+            // modelBuilder.Entity<AppCoupon>().HasNoKey();
+
         }
     }
 
